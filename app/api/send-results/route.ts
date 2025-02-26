@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const TELEGRAM_API = `https://api.telegram.org/bot${botToken}`;
 
     const currentDate = new Date().toLocaleString("ru-RU", {
-      timeZone: "Europe/Moscow",
+      timeZone: "Asia/Almaty",
       dateStyle: "medium",
       timeStyle: "short",
     });
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 ━━━━━━━━━━━━━━━━━━━━━
 
 🏆 ПОБЕДИТЕЛ${winners.length > 1 ? "И" : "Ь"}: ${winners
-      .map((w: any) => w.toUpperCase())
+      .map((w: string) => w.toUpperCase())
       .join(", ")}
 
 😢 ЛУЗЕРЫ: ${losers.join(", ")}

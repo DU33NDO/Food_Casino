@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { SlotMachine } from "@/components/slot-machine";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // import { sendGameResults } from "@/utils/telegram";
 
 export default function GamePage() {
