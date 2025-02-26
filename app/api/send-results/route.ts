@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const sendMessage = async (chatId: string) => {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
 
         const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
           method: "POST",
@@ -76,7 +76,15 @@ export async function POST(req: Request) {
 ━━━━━━━━━━━━━━━━━━━━━
 `;
 
-    const results = await Promise.all(chatIds.map(sendMessage));
+    const batchSize = 3;
+    const results = [];
+
+    for (let i = 0; i < chatIds.length; i += batchSize) {
+      const batch = chatIds.slice(i, i + batchSize);
+      const batchResults = await Promise.all(batch.map(sendMessage));
+      results.push(...batchResults);
+    }
+
     const successCount = results.filter(Boolean).length;
 
     if (successCount === 0) {
