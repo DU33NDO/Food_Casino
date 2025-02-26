@@ -23,6 +23,37 @@ export async function POST(req: Request) {
 
     const TELEGRAM_API = `https://api.telegram.org/bot${botToken}`;
 
+    const sendMessage = async (chatId: string) => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: "HTML",
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return true;
+      } catch (error) {
+        console.error(`Failed to send message to chat ${chatId}:`, error);
+        return false;
+      }
+    };
+
     const currentDate = new Date().toLocaleString("ru-RU", {
       timeZone: "Asia/Almaty",
       dateStyle: "medium",
@@ -45,25 +76,23 @@ export async function POST(req: Request) {
 ━━━━━━━━━━━━━━━━━━━━━
 `;
 
-    const sendPromises = chatIds.map((chatId) =>
-      fetch(`${TELEGRAM_API}/sendMessage`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: "HTML",
-        }),
-      })
-    );
+    const results = await Promise.all(chatIds.map(sendMessage));
+    const successCount = results.filter(Boolean).length;
 
-    await Promise.all(sendPromises);
+    if (successCount === 0) {
+      return NextResponse.json(
+        { error: "Failed to send all messages" },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      sentCount: successCount,
+      totalCount: chatIds.length,
+    });
   } catch (error) {
-    console.error("Failed to send Telegram notification:", error);
+    console.error("Failed to send Telegram notifications:", error);
     return NextResponse.json(
       { error: "Failed to send messages" },
       { status: 500 }
