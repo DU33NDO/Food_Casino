@@ -3,7 +3,7 @@ import TelegramUser from "@/lib/models/TelegramUser";
 
 export async function fetchTelegramUpdates() {
   try {
-    const botToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN is not set");
 
     const TELEGRAM_API = `https://api.telegram.org/bot${botToken}`;

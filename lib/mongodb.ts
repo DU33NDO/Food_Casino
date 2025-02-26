@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { fetchTelegramUpdates } from "@/lib/fetchTelegramUpdates";
 
-const MONGODB_URI = process.env.NEXT_PUBLIC_MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 export async function connectToDB() {
   if (mongoose.connection.readyState >= 1) return;

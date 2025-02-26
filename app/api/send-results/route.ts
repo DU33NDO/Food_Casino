@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const botToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!botToken) {
       throw new Error("TELEGRAM_BOT_TOKEN is not set");
     }
